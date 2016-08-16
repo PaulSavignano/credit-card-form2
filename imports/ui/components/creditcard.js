@@ -13,6 +13,30 @@ export class CreditCard extends Component {
       cvc: null,
       token: null,
     }
+    this.setCardType = this.setCardType.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.resetCard = this.resetCard.bind(this)
+  }
+  resetCard() {
+    this.setState({
+      number: null,
+      exp_month: null,
+      exp_year: null,
+      cvc: null,
+      token: null
+    })
+  }
+  handleSubmit(event) {
+    event.preventDefault()
+    this.resetCard()
+    const { refs } = this
+    const number = refs.number.value
+    const expiration = refs.expiration.value.split('/')
+    const exp_month = parseInt(expiration[0], 10)
+    const exp_year = parseInt(expiration[1], 10)
+    const cvc = refs.cvc.value
+    const card = { number, exp_month, exp_year, cvc }
+    console.log(card)
   }
   setCardType(event) {
     const type = Payment.fns.cardType(event.target.value)
@@ -45,7 +69,7 @@ export class CreditCard extends Component {
             <FormGroup>
               <ControlLabel>Card Number</ControlLabel>
               <input
-                onKeyUp={ this.setCardType.bind(this) }
+                onKeyUp={ this.setCardType }
                 className="form-control"
                 type="text"
                 ref="number"
@@ -83,7 +107,6 @@ export class CreditCard extends Component {
     )
   }
   componentDidMount() {
-    console.log(this.refs)
     const { number, expiration, cvc } = this.refs
     Payment.formatCardNumber(number)
     Payment.formatCardExpiry(expiration)
