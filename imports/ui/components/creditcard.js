@@ -14,9 +14,87 @@ export class CreditCard extends Component {
       token: null,
     }
   }
+  setCardType(event) {
+    const type = Payment.fns.cardType(event.target.value)
+    const cards = document.querySelectorAll('[data-brand]')
+    cards.forEach.call(cards, (element) => {
+      if (element.getAttribute('data-brand') === type) {
+        element.classList.add('active')
+      } else {
+        element.classList.remove('active')
+      }
+    })
+  }
+  renderCardList() {
+    return (
+      <ul className="credit-card-list clearfix">
+        <li><i data-brand="visa" className="fa fa-cc-visa"></i></li>
+        <li><i data-brand="amex" className="fa fa-cc-amex"></i></li>
+        <li><i data-brand="mastercard" className="fa fa-cc-mastercard"></i></li>
+        <li><i data-brand="jcb" className="fa fa-cc-jcb"></i></li>
+        <li><i data-brand="discover" className="fa fa-cc-discover"></i></li>
+        <li><i data-brand="dinersclub" className="fa fa-cc-diners-club"></i></li>
+      </ul>
+    )
+  }
+  renderCardForm() {
+    return (
+      <form onSubmit={ this.handleSubmit } className="CardForm">
+        <Row>
+          <Col xs={ 12 }>
+            <FormGroup>
+              <ControlLabel>Card Number</ControlLabel>
+              <input
+                onKeyUp={ this.setCardType.bind(this) }
+                className="form-control"
+                type="text"
+                ref="number"
+                placeholder="Card Number"
+              />
+            </FormGroup>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={ 6 } sm={ 5 }>
+            <FormGroup>
+              <ControlLabel>Expiration</ControlLabel>
+              <input
+                ref="expiration"
+                placeholder="MM/YYYY"
+                type="text"
+                className="form-control text-center"
+              />
+            </FormGroup>
+          </Col>
+          <Col xs={ 6 } sm={ 4 } smOffset={ 3 }>
+            <FormGroup>
+              <ControlLabel>CVC</ControlLabel>
+              <input
+                ref="cvc"
+                placeholder="CVC"
+                type="text"
+                className="form-control text-centered"
+              />
+            </FormGroup>
+          </Col>
+        </Row>
+        <Button type="submit" bsStyle="success" block>Generate Token</Button>
+      </form>
+    )
+  }
+  componentDidMount() {
+    console.log(this.refs)
+    const { number, expiration, cvc } = this.refs
+    Payment.formatCardNumber(number)
+    Payment.formatCardExpiry(expiration)
+    Payment.formatCardCVC(cvc)
+  }
   render() {
     return(
-      <div className="CreditCard">CreditCard</div>
+      <div className="CreditCard">
+        { this.renderCardList() }
+        { this.renderCardForm() }
+      </div>
     )
   }
 }
